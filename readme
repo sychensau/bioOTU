@@ -1,0 +1,141 @@
+In formal use bioOTU to pick OTUs, ahead of reading the follow notes.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Essential requirements:
+
+
+    (1) Operating system
+        Linux
+        (The bioOTU can only be operated on Linux system at present.)
+
+    (2) Software
+        Python2.7
+        (The bioOTU is mainly developed by python and consisted by python scripts. Therefore, Python2.7 is required and can be downloaded from official website(www.python.org/downloads/). In fact, python2.7 is always pre-installed on linux system. Hence, you can check it by executing terminal command as 'python --version', before you decide to download and install python2.7.)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+usage:
+
+
+    (1) dereplication.py
+
+    --list/-l   the list file (two column separated by tab) for all samples. The first column is the absolute path of sample files, and second column is the specified name of sample.
+
+    --index/-n  to select the index ("samplesize" or "abundance") for dividing all unique sequences into both multiple and singleton tags.
+
+    --help/-h help
+
+
+    (2) classifier.py
+
+    --fasta/-f   (required) the input file (in fasta format) that contains all your sequences for taxonomical assignments ("unique_sequences_multiple.fa")
+
+    --template/-t   (required) the reference database, such as that are retrieved from RDP or SILVA (in fasta format)
+
+    --taxonomy/-a   (required) the taxonomical file corresponding to your reference sequences
+
+    --ksize/-k   (optional) to specify the size of kmer, default:8
+
+    --iters/-i   (optional) to specify the number of iteration, default:1000
+
+    --cutoff/-c   (optional) to specify bootstrap cutoff for supporting the taxonomical assignment, default:95
+
+    --processors/-p   (optional) processors, default:1
+
+
+    (3) taxonomy_guided_OTU_pick.py
+
+    --assigned/-a   (required) the file containing these taxonomically assigned sequences ("unique_sequences_multiple_assigned.fa")
+
+    --unassigned/-u   (required) the file containing the sequences failing to be taxonomically assigned ("unique_sequences_multiple_unassigned.fa") 
+
+    --taxonomy/-t   (required) the file of taxonomical information for all multiple sequences ("unique_sequences_multiple.taxonomy")
+
+    --singleton/-s   (required) the file containing singleton tags ("unique_sequences_singleton.fa")
+
+    --threshold/-h   (optional) to specify the distance cutoff for OTUs clustering, default:0.03
+
+    --kdistance/-k   (optional) to specify cutoff of kmer distance, default:0.5
+
+    --processors/-p  (optional) processors, default:1
+
+
+    (4) chimera_detection.py
+    --best_reference/-b   (required) input file containing all reference sequences for chimera detection ("taxonomy_guided_OTU.fa")
+
+    --pengding_sequence/-s   (required) input file containing all candidate sequences subject to chimera detection ("pengding_sequences_multiple.fa")
+
+    --sample_size/-r   (optional) to specify minimum value of sample size for adding these pengding sequences into reference database
+
+    --processors/-p   (optional) processors, default:1
+
+
+    (5) heuristic_search_OTU_pick.py
+
+    --pengding_nonchimera/-s   (required) input file containing all pengding multiple sequences after chimera detection ("pengding_sequences_multiple.nonchimera")
+
+    --pending_singleton/-g   (required) input file containing all pengding singleton sequences ("pending_sequence_singleton.fa")
+
+    --threshold/-h   (optional) to specify the distance cutoff for OTUs clustering, default:0.03
+
+    --kdistance/-k   (optional) to specify cutoff of kmer distance, default:0.5
+
+    --processors/-p   (optional) processors, default:1
+
+
+    (6) create_OTU_table.py
+
+    --OTUlist/-u   list files (file names are separated by ',') of these constructed OTUs by both taxonomy-guided and heuristic search methods ("taxonomy_guided_OTU.list,heuristic_search_OTU.list")
+
+    --table/-t   table file containing information of both sample size and abundance for all unique sequences created by module of "dereplication.py" ("unique_sequences.table")
+
+    --group/-g   list file provided by user, which contains tab-separated two column: the first column is the specified name of sample, and the second column is group ID.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Analysis:
+
+
+    Preliminary files:
+
+    (1) samples.list	a list file with the fasta files of every samples and sample tags/names.
+
+    (2) trainset14_032015.rdp_bacteria.fasta	a fasta file with the reference sequences (downloaded from silva、RDP or GreenGene)
+
+    (3) strainset14_032015.rdp_bacteria.tax	a taxonomy file with the taxonomy information of all reference sequences (downloaded with reference sequences at the same time).
+
+
+    step1:
+        $ python bioOTU/dereplication.py -l samples.list --index samplesize
+
+    step2:
+        $ python bioOTU/classifier.py --fasta unique_sequences_multiple.fa --template trainset14_032015.rdp_bacteria.fasta --taxonomy strainset14_032015.rdp_bacteria.tax --cutoff 95 -p 8 --iters 1000
+
+    step3:
+        $ python bioOTU/taxonomy_guided_OTU_pick.py --assigned unique_sequences_multiple_assigned.fa --unassigned unique_sequences_multiple_unassigned.fa --taxonomy unique_sequences_multiple.taxonomy --singleton unique_sequences_singleton.fa --threshold 0.03 --kdistance 0.5 --processors 8
+
+    step4:
+        $ python bioOTU/chimera_detection.py --best_reference taxonomy_guided_OTU.fa --pengding_sequence pengding_sequences_multiple.fa --processors 8
+
+    step5:
+        $ python bioOTU/heuristic_search_OTU_pick.py --pengding_nonchimera pengding_sequences_multiple.nonchimera --pending_singleton pending_sequence_singleton.fa --kdistance 0.5 --threshold 0.03 --processors 8
+
+    step6:
+        $ python bioOTU/create_OTU_table.py --OTUlist heuristic_search_OTU.list,taxonomy_guided_OTU.list --table unique_sequences.table
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+contact:
+
+Dr. Shi-Yi Chen:
+
+Farm Animal Genetic Resources Exploration and Innovation Key Laboratory of Sichuan Province, Sichuan Agricultural University, Chengdu Campus
+
+211# Huimin Road, Wenjiang 611130 Sichuan, China
+
+Fax: 86-28-86290987
+
+Emails: sychensau@gmail.com
+
