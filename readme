@@ -15,14 +15,23 @@ Essential requirements:
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
+download
+
+    You can download bioOTU from https://github.com/chengroup/bioOTU and unzip the file. Or you can also download bioOTU by executing the following command:
+
+    $ git clone  https://github.com/chengroup/bioOTU.git
+
+    ***Note: specific symbol (especially, minus/'-') should not be included in software and input file path.***
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
 usage:
 
 
     (1) dereplication.py
 
-    --list/-l   the list file (two column separated by tab) for all samples. The first column is the absolute path of sample files, and second column is the specified name of sample.
+    --list/-l   (required) the list file (two column separated by tab) for all samples. The first column is the absolute path of sample files, and second column is the specified name of sample.
 
-    --index/-n  to select the index ("samplesize" or "abundance") for dividing all unique sequences into both multiple and singleton tags.
+    --index/-n  (optional) to select the index ("samplesize" or "abundance") for dividing all unique sequences into both multiple and singleton tags.
 
     --help/-h help
 
@@ -43,6 +52,8 @@ usage:
 
     --processors/-p   (optional) processors, default:1
 
+    --help/-h help
+
 
     (3) taxonomy_guided_OTU_pick.py
 
@@ -60,6 +71,8 @@ usage:
 
     --processors/-p  (optional) processors, default:1
 
+    --help/-h help
+
 
     (4) chimera_detection.py
     --best_reference/-b   (required) input file containing all reference sequences for chimera detection ("taxonomy_guided_OTU.fa")
@@ -70,6 +83,8 @@ usage:
 
     --processors/-p   (optional) processors, default:1
 
+    --help/-h help
+
 
     (5) heuristic_search_OTU_pick.py
 
@@ -77,20 +92,24 @@ usage:
 
     --pending_singleton/-g   (required) input file containing all pengding singleton sequences ("pending_sequence_singleton.fa")
 
-    --threshold/-h   (optional) to specify the distance cutoff for OTUs clustering, default:0.03
+    --threshold/-r   (optional) to specify the distance cutoff for OTUs clustering, default:0.03
 
     --kdistance/-k   (optional) to specify cutoff of kmer distance, default:0.5
 
     --processors/-p   (optional) processors, default:1
 
+    --help/-h help
+
 
     (6) create_OTU_table.py
 
-    --OTUlist/-u   list files (file names are separated by ',') of these constructed OTUs by both taxonomy-guided and heuristic search methods ("taxonomy_guided_OTU.list,heuristic_search_OTU.list")
+    --OTUlist/-u   (required) list files (file names are separated by ',') of these constructed OTUs by both taxonomy-guided and heuristic search methods ("taxonomy_guided_OTU.list,heuristic_search_OTU.list")
 
-    --table/-t   table file containing information of both sample size and abundance for all unique sequences created by module of "dereplication.py" ("unique_sequences.table")
+    --table/-t   (required) table file containing information of both sample size and abundance for all unique sequences created by module of "dereplication.py" ("unique_sequences.table")
 
-    --group/-g   list file provided by user, which contains tab-separated two column: the first column is the specified name of sample, and the second column is group ID.
+    --group/-g   (optional) list file provided by user, which contains tab-separated two column: the first column is the specified name of sample, and the second column is group ID.
+
+    --help/-h help
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
